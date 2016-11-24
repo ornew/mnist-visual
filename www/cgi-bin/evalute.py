@@ -15,10 +15,6 @@ def error(m):
     'error': m
   })
 
-print "Content-type: application/json"
-print # Follow body
-
-
 def do(payload):
   image = payload.get('data', None)
   step = payload.get('step', 1200)
@@ -49,6 +45,8 @@ def do(payload):
       })
 
 if __name__ == "__main__":
+  print "Content-type: application/json"
+  print # Follow body
   form = cgi.FieldStorage()
   payload = json.loads(form.getvalue('payload', 'null'))
   if payload == None:
