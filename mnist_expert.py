@@ -29,7 +29,7 @@ with tf.Graph().as_default():
 
   # Training and Evaluting
   start = time.time()
-  for step in range(20000):
+  for step in range(1,20000+1):
     batch = mnist_data.train.next_batch(50)
     if verbose:
       result = sess.run(inference, feed_dict={
