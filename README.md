@@ -1,4 +1,4 @@
-# MNIST Visualize Sample for TensorFlow
+# MNIST Visualize Exsample for TensorFlow
 
 MNIST web front-end app.
 
