@@ -7,7 +7,8 @@ import json
 import numpy as np
 import tensorflow as tf
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..')))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..'))
+sys.path.append(project_root)
 import mnist
 
 def error(m):
@@ -30,7 +31,7 @@ def do(payload):
     saver = tf.train.Saver()
     session = tf.Session()
     session.run(tf.initialize_all_variables())
-    ckpt = os.path.abspath('../www/models/ckpt-%d' % step)
+    ckpt = os.path.join(project_root, 'root', 'models', 'ckpt-%d' % step)
     if os.path.isfile(ckpt):
       saver.restore(session, ckpt)
     else:
