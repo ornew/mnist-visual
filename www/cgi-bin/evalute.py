@@ -6,7 +6,8 @@ import cgi
 import json
 import numpy as np
 import tensorflow as tf
-sys.path.append(os.path.abspath(os.path.abspath(os.path.dirname(__file__)) + '/../../'))
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..')))
 import mnist
 
 def error(m):
