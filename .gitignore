@@ -1,2 +1,4 @@
 models/
+MNIST_data/
 *.swp
+*.pyc
