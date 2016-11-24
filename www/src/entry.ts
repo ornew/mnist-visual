@@ -142,10 +142,10 @@ window.onload = function(){
   canvas.setAttribute("width", 28);
   canvas.setAttribute("height", 28);
 
-  let clear_button = document.getElementById("clear");
+  const clear_button = document.getElementById("clear");
   clear_button.addEventListener("click", clearCanvas);
 
-  let evalute_button = document.getElementById("evalute");
+  const evalute_button = document.getElementById("evalute");
   evalute_button.addEventListener("click", evalute);
 
   context = canvas.getContext( "2d" );
@@ -156,8 +156,8 @@ window.onload = function(){
   context.lineCap   = "round";
   clearCanvas();
 
-  let step_seekbar = <HTMLInputElement> document.getElementById("step_seekbar");
-  let step_display = document.getElementById("step_display");
+  const step_seekbar = <HTMLInputElement> document.getElementById("step_seekbar");
+  const step_display = document.getElementById("step_display");
   function onSeek(){
     step = parseInt(step_seekbar.value);
     step_display.innerHTML = step_seekbar.value;
