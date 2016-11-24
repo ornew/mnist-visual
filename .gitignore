@@ -2,3 +2,4 @@ models/
 MNIST_data/
 *.swp
 *.pyc
+mnist-visualize-example.js
