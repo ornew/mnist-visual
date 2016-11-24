@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "es6"
+  },
+  "include": [
+    "src/ts/**/*"
+  ],
+  "files": [
+    "src/entry.ts"
+  ]
+}

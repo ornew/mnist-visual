@@ -1,0 +1,33 @@
+{
+  "name": "mnist-visualizer-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "rebuild": "npm-run-all clean build",
+    "build": "webpack -p",
+    "debug": "webpack",
+    "serve": "webpack-dev-server --inline --content-base ../root/ --port 59631",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Arata Furukawa",
+  "license": "ISC",
+  "dependencies": {
+    "onsenui": "^2.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.51",
+    "css-loader": "^0.26.0",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.4",
+    "node-sass": "^3.13.0",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
+    "ts-loader": "^1.2.2",
+    "typescript": "^2.0.10",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2",
+    "webpack-require-http": "^0.3.0"
+  }
+}

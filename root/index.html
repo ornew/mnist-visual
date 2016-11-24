@@ -5,38 +5,8 @@
     <meta charset="utf-8">
     <meta name="author" content="古川新,Arata Furukawa,ornew">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="index.css" />
-    <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="mnist-visualize-example.js"></script>
   </head>
-  <body class="ornew">
-    <canvas id="canvas"></canvas>
-    <p>
-      <input type="button" id="clear" value="clear" />
-      <input type="button" id="evalute" value="evalute" />
-    </p>
-    <section>
-      <p>
-        <span>Step <span id="step_display">0</span></span>
-        <input type="range" id="step_seekbar" min="1000" max="20000" step="1000" value="1000" />
-      </p>
-    </section>
-    <section>
-      <p>予測：<span id="inference">-</span></p>
-      <table>
-        <tr><th></th><th>%</th></tr>
-        <tr><td>0</td><td id="inference-0">-</td></td>
-        <tr><td>1</td><td id="inference-1">-</td></td>
-        <tr><td>2</td><td id="inference-2">-</td></td>
-        <tr><td>3</td><td id="inference-3">-</td></td>
-        <tr><td>4</td><td id="inference-4">-</td></td>
-        <tr><td>5</td><td id="inference-5">-</td></td>
-        <tr><td>6</td><td id="inference-6">-</td></td>
-        <tr><td>7</td><td id="inference-7">-</td></td>
-        <tr><td>8</td><td id="inference-8">-</td></td>
-        <tr><td>9</td><td id="inference-9">-</td></td>
-      </table>
-    </section>
-    <section id="log">
-    </section>
+  <body>
   </body>
 </html>
