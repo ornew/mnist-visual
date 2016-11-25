@@ -1,4 +1,6 @@
-import * as ons from 'onsenui';
+
+const chart = require('chart.js');
+const ons = require('onsenui');
 
 const ons_css = require('../node_modules/onsenui/css/onsenui.css');
 const ons_cmp_css = require('../node_modules/onsenui/css/onsen-css-components.css');
@@ -7,6 +9,7 @@ const main_style = require('style/main.scss');
 
 var context: any;
 var canvas: any;
+var chart_percentages: typeof chart;
 var mf = false;
 var ox = 0;
 var oy = 0;
@@ -108,8 +111,9 @@ function evalute() {
       }
       document.getElementById("inference").innerHTML = response['inference'];
       for(var i = 0; i < 10; ++i) {
-        document.getElementById("inference-" + i).innerHTML = String(Math.round(response['results'][i]));
+        chart_percentages.data.datasets[0].data[i] = response['results'][i];
       }
+      chart_percentages.update();
     }
   };
   xhttp.open("POST", "cgi-bin/evalute.py", true);
@@ -163,5 +167,26 @@ window.onload = function(){
     step_display.innerHTML = step_seekbar.value;
   }
   step_seekbar.addEventListener("input", onSeek);
+
+  chart_percentages = new chart(document.getElementById("percentages"), {
+    type: 'bar',
+    data: {
+      labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      datasets: [{
+        label: 'Predicted distribution',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  });
+
 }
 

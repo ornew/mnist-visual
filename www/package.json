@@ -13,6 +13,7 @@
   "author": "Arata Furukawa",
   "license": "ISC",
   "dependencies": {
+    "chart.js": "^2.4.0",
     "onsenui": "^2.0.4"
   },
   "devDependencies": {
