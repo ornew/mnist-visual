@@ -17,6 +17,9 @@ var x = 0;
 var y = 0;
 var step = 1000;
 
+var evalute_button: HTMLInputElement;
+var progress: HTMLElement;
+
 function onDown(event: any){
   mf=true;
   ox=event.touches[0].pageX-event.target.getBoundingClientRect().left;
@@ -100,20 +103,28 @@ function error(m: any) {
 }
 
 function evalute() {
+  evalute_button.disabled = true;
+  progress.style.opacity = '1';
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
-      var response = JSON.parse(this.responseText);
-      if('error' in response) {
-        error(response['error']);
-        return;
+    if (this.readyState == 4){
+      switch(this.status) {
+        case 200:
+          console.log(this.responseText);
+          var response = JSON.parse(this.responseText);
+          if('error' in response) {
+            error(response['error']);
+            return;
+          }
+          document.getElementById("inference").innerHTML = response['inference'];
+          for(var i = 0; i < 10; ++i) {
+            chart_percentages.data.datasets[0].data[i] = response['results'][i];
+          }
+          chart_percentages.update();
+          break;
       }
-      document.getElementById("inference").innerHTML = response['inference'];
-      for(var i = 0; i < 10; ++i) {
-        chart_percentages.data.datasets[0].data[i] = response['results'][i];
-      }
-      chart_percentages.update();
+      progress.style.opacity = '0';
+      evalute_button.disabled = false;
     }
   };
   xhttp.open("POST", "cgi-bin/evalute.py", true);
@@ -149,8 +160,11 @@ window.onload = function(){
   const clear_button = document.getElementById("clear");
   clear_button.addEventListener("click", clearCanvas);
 
-  const evalute_button = document.getElementById("evalute");
+  evalute_button = <HTMLInputElement> document.getElementById("evalute");
   evalute_button.addEventListener("click", evalute);
+
+  progress = document.getElementById("progress");
+  progress.style.opacity = '0';
 
   context = canvas.getContext( "2d" );
   context.scale(0.1, 0.1);

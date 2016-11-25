@@ -7,6 +7,7 @@
     <div class="buttons">
       <ons-button id="clear">CLEAR</ons-button>
       <ons-button id="evalute">EVALUTE</ons-button>
+      <ons-progress-circular indeterminate id="progress"></ons-progress-circular>
     </div>
     <p>
       <ons-row>
@@ -19,7 +20,10 @@
       </ons-row>
     </p>
     <section>
-      <p>予測：<span id="inference">-</span></p>
+      <div class="center">
+        <div>予測</div>
+        <div id="inference">-</div>
+      </div>
       <canvas id="percentages"></canvas>
     </section>
     <section id="log">
