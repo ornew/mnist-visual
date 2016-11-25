@@ -1,35 +1,46 @@
-section.contents
-  min-width 20em
-  max-width 40em
-  margin 0 auto
-  padding 1em
+.ornew
+  section.contents
+    min-width 20em
+    max-width 40em
+    margin 0 auto
+    padding 1em
 
-canvas
-  display block
-  width 280px
-  height 280px
-  padding 0
-  margin 1em auto
+  canvas
+    display block
+    width 280px
+    height 280px
+    padding 0
+    margin 1em auto
 
-td
-  min-width 3em
+  td
+    min-width 3em
 
-.buttons
-  display flex
-  justify-content center
-  .button
-    margin 0 1em
+  .buttons
+    display flex
+    justify-content center
+    .button
+      margin 0 1em
 
-.canvas
-  border solid 1px #000
+  .contents
+    .center
+      margin 1em 0
+      text-align center
+
+  .progress-circular
+    transition opacity .3s
+
+#canvas
+  border dashed 1px gray
 
 #log
-  time
-    color gray
-    margin 0 1em
+    time
+      color gray
+      margin 0 1em
 
+#inference
+    font-size 3em
 
 #step_display
-  display inline-block
-  width 5em
+    display inline-block
+    width 5em
 
