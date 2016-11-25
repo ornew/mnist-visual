@@ -1,12 +1,28 @@
 # MNIST Visualize Exsample for TensorFlow
 
-MNIST web front-end app.
+It is an exsample to interactively test MNIST with a browser.
 
-## Usage
+## How to Use
 
-First, run the `python mnist_train.py`. Hang tight, this could take a while...
+After `clone`, build the web application.  You need to have `npm` installed.
 
-After that, start the server: `python www/server.py`. Open `localhost:59630` in browser.
+```
+$ clone git https://github.com/ornew/mnist-visual.git
+$ cd mnist-visual/www
+$ npm i
+$ npm run build
+```
+
+Next, execute `python train.py` to create a model. Hang tight, this may take a while...
+
+`train.py` creates a checkpoint every 1000 steps.
+
+```
+$ cd ..
+$ python train.py
+```
+
+When you are done, start the server: `python server.py -p <port>`. Open `localhost:<port>` in the browser.
 
 ---
 
