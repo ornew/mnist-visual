@@ -2,10 +2,10 @@
 const chart = require('chart.js');
 const ons = require('onsenui');
 
-const ons_css = require('../node_modules/onsenui/css/onsenui.css');
-const ons_cmp_css = require('../node_modules/onsenui/css/onsen-css-components.css');
-const main_page = require('layout/main_page.html');
-const main_style = require('style/main.scss');
+const ons_css = require('../node_modules/onsenui/css/onsenui');
+const ons_cmp_css = require('../node_modules/onsenui/css/onsen-css-components');
+const main_page = require('layout/main');
+const main_style = require('style/main');
 
 var context: any;
 var canvas: any;

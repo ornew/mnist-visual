@@ -10,10 +10,10 @@ module.exports = {
   },
   module: {
     loaders: [{
-      test: /\.(scss|css)/,
-      loaders: ["style", "css", "sass"]
+      test: /\.(styl|css)$/,
+      loaders: ["style", "css", "stylus"]
     }, {
-      test: /\.ts/,
+      test: /\.ts$/,
       loaders: ["ts"]
     }, {
       test   : /\.(png|jpg|gif)$/,
@@ -28,7 +28,7 @@ module.exports = {
   },
   resolve: {
     root: path.resolve(__dirname, "./src"),
-    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.html']
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.html', '.css', '.styl']
   },
   devServer: {
     contentBase: "./public",
