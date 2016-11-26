@@ -9,7 +9,7 @@ const main_style = require('style/main');
 
 var context: any;
 var canvas: any;
-var chart_percentages: typeof chart;
+var chart_results: typeof chart;
 var mf = false;
 var ox = 0;
 var oy = 0;
@@ -118,9 +118,9 @@ function evalute() {
           }
           document.getElementById("inference").innerHTML = response['inference'];
           for(var i = 0; i < 10; ++i) {
-            chart_percentages.data.datasets[0].data[i] = response['results'][i];
+            chart_results.data.datasets[0].data[i] = response['results'][i];
           }
-          chart_percentages.update();
+          chart_results.update();
           break;
       }
       progress.style.opacity = '0';
@@ -182,7 +182,7 @@ window.onload = function(){
   }
   step_seekbar.addEventListener("input", onSeek);
 
-  chart_percentages = new chart(document.getElementById("percentages"), {
+  chart_results = new chart(document.getElementById("results"), {
     type: 'bar',
     data: {
       labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
@@ -195,12 +195,13 @@ window.onload = function(){
       scales: {
         yAxes: [{
           ticks: {
-            beginAtZero:true
+            max: 15,
+            min: -15,
+            stepSize: 5
           }
         }]
       }
     }
   });
-
 }
 

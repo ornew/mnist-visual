@@ -39,10 +39,9 @@ def do(payload):
       return
     results = session.run(inference, feed_dict={x:[image], keep_prob: 1.0})[0]
     result = np.argmax(results)
-    results_plus = results + np.abs(results[np.argmin(results)])
     print json.dumps({
         'inference': result,
-        'results': (results_plus * 100. / np.sum(results_plus)).tolist()
+        'results': results.tolist()
       })
 
 if __name__ == "__main__":
