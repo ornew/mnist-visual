@@ -2,10 +2,10 @@ import sys
 import os
 import argparse
 import time
-from itertools import izip
-from tensorflow.examples.tutorials.mnist import input_data
-import tensorflow as tf
+import json
 import numpy as np
+import tensorflow as tf
+from tensorflow.examples.tutorials.mnist import input_data
 import mnist
 
 # MNIST data
