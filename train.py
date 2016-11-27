@@ -21,7 +21,7 @@ FLAGS = None
 def train():
   with tf.Graph().as_default():
     # test results
-    tests = np.zeros((20, 10, 10));
+    tests = np.zeros((20, 10, 10), dtype=np.int64);
 
     # Placeholders
     x = tf.placeholder(tf.float32, shape=[None, 784])
@@ -81,7 +81,7 @@ def train():
     print('Total time: {0} [sec]'.format(elapsed_time))
     print('Save test_results.json ...')
     f = open(os.path.join(abscd, 'root', 'test_results.json'), 'w')
-    json.dump(tests, f);
+    json.dump(tests.tolist(), f);
     print('Done!')
 
 if __name__ == '__main__':
