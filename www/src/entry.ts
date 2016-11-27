@@ -152,49 +152,51 @@ function load_test_results(){
   request.addEventListener('load', (event: Event) => {
     if(request.status == 200){
       const json: any = request.response;
-      const frag_loss_maps = document.createDocumentFragment();
-      for(let n = 0; n < json.length; ++n){
-        const table = document.createElement('table');
-        const frag_table = document.createDocumentFragment();
-        const thead = document.createElement('thead');
-        const tbody = document.createElement('tbody');
-        const frag_thead = document.createDocumentFragment();
-        const frag_tbody = document.createDocumentFragment();
-        {
-          const tr = document.createElement('tr');
-          const frag_tr = document.createDocumentFragment();
-          frag_tr.appendChild(document.createElement('th'));
+      if(json){
+        const frag_loss_maps = document.createDocumentFragment();
+        for(let n = 0; n < json.length; ++n){
+          const table = document.createElement('table');
+          const frag_table = document.createDocumentFragment();
+          const thead = document.createElement('thead');
+          const tbody = document.createElement('tbody');
+          const frag_thead = document.createDocumentFragment();
+          const frag_tbody = document.createDocumentFragment();
+          {
+            const tr = document.createElement('tr');
+            const frag_tr = document.createDocumentFragment();
+            frag_tr.appendChild(document.createElement('th'));
+            for(let i = 0; i < 10; ++i){
+              const th = document.createElement('th');
+              th.textContent = '' + i;
+              frag_tr.appendChild(th);
+            }
+            tr.appendChild(frag_tr);
+            frag_table.appendChild(tr);
+          }
           for(let i = 0; i < 10; ++i){
-            const th = document.createElement('th');
+            let frag_tr = document.createDocumentFragment();
+            let tr = document.createElement('tr');
+            let th = document.createElement('th');
             th.textContent = '' + i;
             frag_tr.appendChild(th);
+            for(let j = 0; j < 10; ++j){
+              const p = json[n][i][j];
+              const td = document.createElement('td');
+              td.textContent = '' + p;
+              td.style.opacity = String(1 - p / 5000);
+              frag_tr.appendChild(td);
+            }
+            tr.appendChild(frag_tr);
+            frag_tbody.appendChild(tr);
           }
-          tr.appendChild(frag_tr);
-          frag_table.appendChild(tr);
+          tbody.appendChild(frag_tbody);
+          frag_table.appendChild(tbody);
+          table.appendChild(frag_table);
+          frag_loss_maps.appendChild(table);
+          table.style.display = 'none';
         }
-        for(let i = 0; i < 10; ++i){
-          let frag_tr = document.createDocumentFragment();
-          let tr = document.createElement('tr');
-          let th = document.createElement('th');
-          th.textContent = '' + i;
-          frag_tr.appendChild(th);
-          for(let j = 0; j < 10; ++j){
-            const p = json[n][i][j];
-            const td = document.createElement('td');
-            td.textContent = '' + p;
-            td.style.opacity = String(1 - p / 5000);
-            frag_tr.appendChild(td);
-          }
-          tr.appendChild(frag_tr);
-          frag_tbody.appendChild(tr);
-        }
-        tbody.appendChild(frag_tbody);
-        frag_table.appendChild(tbody);
-        table.appendChild(frag_table);
-        frag_loss_maps.appendChild(table);
-        table.style.display = 'none';
+        loss_maps.appendChild(frag_loss_maps);
       }
-      loss_maps.appendChild(frag_loss_maps);
     } else {
       error('テストデータの取得に失敗しました: ' + request.status + ' ' + request.statusText);
     }
@@ -245,13 +247,13 @@ window.onload = function(){
   context.lineCap   = "round";
   clearCanvas();
 
-  const step_seekbar = <HTMLInputElement> document.getElementById("step_seekbar");
-  const step_display = document.getElementById("step_display");
+  const step_seekbar = <HTMLInputElement> document.getElementById("step-seekbar");
+  const step_display = document.getElementById("step-display");
   function onSeek(){
     step = parseInt(step_seekbar.value);
     step_display.innerHTML = step_seekbar.value;
 
-    const tables = document.getElementById('loss-maps').children;
+    const tables = document.getElementById('test-results').children;
     if(tables){
       for(let i = 0; i < tables.length; ++i){
         if(i + 1 == step / 1000){
