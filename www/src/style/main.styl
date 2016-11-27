@@ -1,8 +1,11 @@
+width-limits()
+  min-width 20em
+  max-width 40em
+  margin 0 auto
+
 .ornew
   section.contents
-    min-width 20em
-    max-width 40em
-    margin 0 auto
+    width-limits()
     padding 1em
 
   canvas
@@ -26,6 +29,15 @@
   .progress-circular
     transition opacity .3s
 
+  .step-config
+    width-limits()
+    margin-top 3px
+    line-height 36px
+    ons-col
+      text-align center
+    ons-range
+      width 90%
+
 #canvas
   border dashed 1px gray
 
@@ -37,9 +49,10 @@
 #inference
   font-size 3em
 
-#step_display
+#step-display
   display inline-block
-  width 5em
+  width 3em
+  text-align right
 
 #test-results
   table
