@@ -135,6 +135,77 @@ function evalute() {
   }));
 }
 
+function load_test_results(){
+  const loss_maps = document.getElementById('test-results');
+  const loading: any = document.createElement('ons-progress-circular');
+  loss_maps.appendChild(loading);
+
+  const request = new XMLHttpRequest();
+  request.responseType = 'json';
+  request.addEventListener('progress', (event: ProgressEvent) => {
+    if(event.lengthComputable){
+      loading.value = event.loaded * 100. /event.total;
+    } else {
+      loading.setAttribute('indeterminate', '');
+    }
+  });
+  request.addEventListener('load', (event: Event) => {
+    if(request.status == 200){
+      const json: any = request.response;
+      const frag_loss_maps = document.createDocumentFragment();
+      for(let n = 0; n < json.length; ++n){
+        const table = document.createElement('table');
+        const frag_table = document.createDocumentFragment();
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        const frag_thead = document.createDocumentFragment();
+        const frag_tbody = document.createDocumentFragment();
+        {
+          const tr = document.createElement('tr');
+          const frag_tr = document.createDocumentFragment();
+          frag_tr.appendChild(document.createElement('th'));
+          for(let i = 0; i < 10; ++i){
+            const th = document.createElement('th');
+            th.textContent = '' + i;
+            frag_tr.appendChild(th);
+          }
+          tr.appendChild(frag_tr);
+          frag_table.appendChild(tr);
+        }
+        for(let i = 0; i < 10; ++i){
+          let frag_tr = document.createDocumentFragment();
+          let tr = document.createElement('tr');
+          let th = document.createElement('th');
+          th.textContent = '' + i;
+          frag_tr.appendChild(th);
+          for(let j = 0; j < 10; ++j){
+            const p = json[n][i][j];
+            const td = document.createElement('td');
+            td.textContent = '' + p;
+            td.style.opacity = String(1 - p / 5000);
+            frag_tr.appendChild(td);
+          }
+          tr.appendChild(frag_tr);
+          frag_tbody.appendChild(tr);
+        }
+        tbody.appendChild(frag_tbody);
+        frag_table.appendChild(tbody);
+        table.appendChild(frag_table);
+        frag_loss_maps.appendChild(table);
+        table.style.display = 'none';
+      }
+      loss_maps.appendChild(frag_loss_maps);
+    } else {
+      error('テストデータの取得に失敗しました: ' + request.status + ' ' + request.statusText);
+    }
+    loading.remove();
+  });
+  request.addEventListener('error', (event: ProgressEvent) => {
+  });
+  request.open('GET', 'test_results.json');
+  request.send();
+}
+
 window.onload = function(){
   document.body.innerHTML = main_page;
   if(ons.platform.isIOS()){
@@ -179,6 +250,17 @@ window.onload = function(){
   function onSeek(){
     step = parseInt(step_seekbar.value);
     step_display.innerHTML = step_seekbar.value;
+
+    const tables = document.getElementById('loss-maps').children;
+    if(tables){
+      for(let i = 0; i < tables.length; ++i){
+        if(i + 1 == step / 1000){
+          (<HTMLElement> tables[i]).style.display = 'table';
+        } else {
+          (<HTMLElement> tables[i]).style.display = 'none';
+        }
+      }
+    }
   }
   step_seekbar.addEventListener("input", onSeek);
 
@@ -203,5 +285,7 @@ window.onload = function(){
       }
     }
   });
+
+  load_test_results();
 }
 
