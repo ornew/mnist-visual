@@ -2,10 +2,10 @@ import sys
 import os
 import argparse
 import time
-from itertools import izip
-from tensorflow.examples.tutorials.mnist import input_data
-import tensorflow as tf
+import json
 import numpy as np
+import tensorflow as tf
+from tensorflow.examples.tutorials.mnist import input_data
 import mnist
 
 # MNIST data
@@ -34,7 +34,9 @@ def train():
 
     saver = tf.train.Saver(max_to_keep=200)
 
+    print('Checkpoints directory: %s' % FLAGS.ckpt_dir)
     if tf.gfile.Exists(FLAGS.ckpt_dir):
+      print('Cleaning checkpoints...')
       tf.gfile.DeleteRecursively(FLAGS.ckpt_dir)
     tf.gfile.MakeDirs(FLAGS.ckpt_dir)
 
@@ -43,6 +45,7 @@ def train():
     sess.run(tf.initialize_all_variables())
 
     # Training and Evaluting
+    print('Start training.')
     start = time.time()
     for step in range(1,20000+1):
       batch = mnist_data.train.next_batch(50)
@@ -75,10 +78,11 @@ def train():
         print ''
       sess.run(train, feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
     elapsed_time = time.time() - start
-
+    print('Total time: {0} [sec]'.format(elapsed_time))
+    print('Save test_results.json ...')
     f = open(os.path.join(abscd, 'root', 'test_results.json'), 'w')
     json.dump(tests, f);
-    print("Total time: {0}".format(elapsed_time)) + " [sec]"
+    print('Done!')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
