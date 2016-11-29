@@ -1,20 +1,64 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import argparse
+import urlparse
+import threading
+import json
+import SocketServer
 import BaseHTTPServer
-import CGIHTTPServer
+import SimpleHTTPServer
 import cgitb; cgitb.enable()  ## This line enables CGI error reporting
+from evalute import evalute
 
-FLAGS = None
+class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+  def impl(self):
+    try:
+      def write(text):
+        self.wfile.write(text)
+      url = urlparse.urlparse(self.path)
+      paths = os.path.normpath(url.path).split(os.path.sep)
+      content_len = int(self.headers.getheader('content-length', 0))
+      body = self.rfile.read(content_len)
+      params = dict(urlparse.parse_qsl(url.query))
+      params.update(dict(urlparse.parse_qsl(body)))
+      print paths
+      print '%s: %s' %(self.command, self.path)
+      if(paths[1] == 'api'):
+        if(len(paths) > 2):
+          if(paths[2] == 'evalute.json'):
+            payload = json.loads(params.get('payload', {}))
+            self.send_response(200)
+            sys.stdout = self.wfile
+            evalute(payload)
+            sys.stdout = sys.__stdout__
+          else:
+            self.send_error(404)
+        else:
+          self.send_error(403)
+      else:
+        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+    except Exception as e:
+      sys.stdout = sys.__stdout__
+      print "Exception: " + str(e)
+      self.send_error(500)
+  def do_GET(self):
+    self.impl()
+  def do_POST(self):
+    self.impl()
 
-def run_server():
+class Server(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
+  pass
+
+def run_server(FLAGS):
   os.chdir(FLAGS.root_dir)
-  server = BaseHTTPServer.HTTPServer
-  handler = CGIHTTPServer.CGIHTTPRequestHandler
-  server_address = ("", FLAGS.port)
-  httpd = server(server_address, handler)
-  httpd.serve_forever()
+  address = ('', FLAGS.port)
+  server  = Server(address, Handler)
+  httpd   = threading.Thread(target=server.serve_forever)
+  httpd.setDaemon(True)
+  httpd.start()
+  print raw_input('wait key')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -30,5 +74,5 @@ if __name__ == '__main__':
       default=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app'),
       help='Server root directory.')
   FLAGS, unparsed = parser.parse_known_args()
-  run_server()
+  run_server(FLAGS)
 

@@ -129,9 +129,9 @@ function evalute() {
       evalute_button.disabled = false;
     }
   };
-  xhttp.open("POST", "cgi-bin/evalute.py", true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.send("payload=" + JSON.stringify({
+  xhttp.open('POST', '/api/evalute.json', true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send('payload=' + JSON.stringify({
     'data': getPixels(),
     'step': step
   }));

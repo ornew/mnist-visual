@@ -12,8 +12,8 @@ gulp.task('compile', function () {
 gulp.task('copy', function () {
   return gulp.src([
     './src/app/index.html',
-    './src/app/cgi-bin/**/*.py',
     './src/server.py',
+    './src/evalute.py',
     './src/mnist/**/*.py'],
     { base: 'src/' })
     .pipe(gulp.dest('./build/'));

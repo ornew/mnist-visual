@@ -6,19 +6,23 @@ import cgi
 import json
 import numpy as np
 import tensorflow as tf
-
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..'))
-sys.path.append(project_root)
 import mnist
+
+ckpt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','models'))
 
 def error(m):
   print json.dumps({
     'error': m
   })
 
-def do(payload):
+def evalute(payload=None):
+  print "Content-type: application/json"
+  print # Follow body
+  if payload == None:
+    error('Payload was not found.')
+    return
   image = payload.get('data', None)
-  step = payload.get('step', 1200)
+  step = payload.get('step', 1000)
 
   if image == None:
     error("The 'data' parameter is require.")
@@ -31,7 +35,7 @@ def do(payload):
     saver = tf.train.Saver()
     session = tf.Session()
     session.run(tf.initialize_all_variables())
-    ckpt = os.path.join(project_root, 'models', 'ckpt-%d' % step)
+    ckpt = os.path.join(ckpt_dir, 'ckpt-%d' % step)
     if os.path.isfile(ckpt):
       saver.restore(session, ckpt)
     else:
@@ -44,12 +48,3 @@ def do(payload):
         'results': results.tolist()
       })
 
-if __name__ == "__main__":
-  print "Content-type: application/json"
-  print # Follow body
-  form = cgi.FieldStorage()
-  payload = json.loads(form.getvalue('payload', 'null'))
-  if payload == None:
-    error('Payload was not found.')
-  else:
-    do(payload)
