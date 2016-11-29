@@ -9,6 +9,8 @@ const main_style = require('style/main');
 
 var context: any;
 var canvas: any;
+var step_seekbar: HTMLInputElement;
+var step_display: HTMLElement;
 var chart_results: typeof chart;
 var mf = false;
 var ox = 0;
@@ -135,6 +137,25 @@ function evalute() {
   }));
 }
 
+function update_table(step: number){
+  const tables = document.getElementById('test-results').children;
+  if(tables){
+    for(let i = 0; i < tables.length; ++i){
+      if(i + 1 == step / 1000){
+        (<HTMLElement> tables[i]).style.display = 'table';
+      } else {
+        (<HTMLElement> tables[i]).style.display = 'none';
+      }
+    }
+  }
+}
+
+function onSeekStepConfig(){
+  step = parseInt(step_seekbar.value);
+  step_display.innerHTML = step_seekbar.value;
+  update_table(step);
+}
+
 function load_test_results(){
   const loss_maps = document.getElementById('test-results');
   const loading: any = document.createElement('ons-progress-circular');
@@ -181,9 +202,13 @@ function load_test_results(){
             frag_tr.appendChild(th);
             for(let j = 0; j < 10; ++j){
               const p = json[n][i][j];
+              let v = p / 20;
+              if(v > 1){
+                v = 1;
+              }
               const td = document.createElement('td');
               td.textContent = '' + p;
-              td.style.opacity = String(1 - p / 5000);
+              td.style.opacity = String(v);
               frag_tr.appendChild(td);
             }
             tr.appendChild(frag_tr);
@@ -196,6 +221,7 @@ function load_test_results(){
           table.style.display = 'none';
         }
         loss_maps.appendChild(frag_loss_maps);
+        window.setTimeout(() => { onSeekStepConfig(); }, 0);
       }
     } else {
       error('テストデータの取得に失敗しました: ' + request.status + ' ' + request.statusText);
@@ -247,24 +273,9 @@ window.onload = function(){
   context.lineCap   = "round";
   clearCanvas();
 
-  const step_seekbar = <HTMLInputElement> document.getElementById("step-seekbar");
-  const step_display = document.getElementById("step-display");
-  function onSeek(){
-    step = parseInt(step_seekbar.value);
-    step_display.innerHTML = step_seekbar.value;
-
-    const tables = document.getElementById('test-results').children;
-    if(tables){
-      for(let i = 0; i < tables.length; ++i){
-        if(i + 1 == step / 1000){
-          (<HTMLElement> tables[i]).style.display = 'table';
-        } else {
-          (<HTMLElement> tables[i]).style.display = 'none';
-        }
-      }
-    }
-  }
-  step_seekbar.addEventListener("input", onSeek);
+  step_seekbar = <HTMLInputElement> document.getElementById("step-seekbar");
+  step_display = document.getElementById("step-display");
+  step_seekbar.addEventListener("input", onSeekStepConfig);
 
   chart_results = new chart(document.getElementById("results"), {
     type: 'bar',
