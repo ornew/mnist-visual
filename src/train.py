@@ -8,7 +8,7 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import mnist
 
-abscd = os.path.abspath(os.path.dirname(__file__))
+proj_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 
 def train(FLAGS):
   mnist_data = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
@@ -73,7 +73,7 @@ def train(FLAGS):
     elapsed_time = time.time() - start
     print('Total time: {0} [sec]'.format(elapsed_time))
     print('Save test_results.json ...')
-    f = open(os.path.join(abscd, 'root', 'test_results.json'), 'w')
+    f = open(os.path.join(proj_dir, 'build', 'app', 'test_results.json'), 'w')
     json.dump(tests.tolist(), f);
     print('Done!')
 
@@ -82,13 +82,13 @@ if __name__ == '__main__':
   parser.add_argument(
       '--ckpt_dir',
       type=str,
-      default=os.path.join(abscd, 'root', 'models'),
+      default=os.path.join(proj_dir, 'build', 'models'),
       help='Checkpoints saved directory.'
   )
   parser.add_argument(
       '--data_dir',
       type=str,
-      default=os.path.join(abscd, 'MNIST_data'),
+      default=os.path.join(proj_dir, 'MNIST_data'),
       help='MNIST data directory.'
   )
   verbose = parser.add_mutually_exclusive_group()

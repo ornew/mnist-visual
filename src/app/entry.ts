@@ -2,8 +2,8 @@
 const chart = require('chart.js');
 const ons = require('onsenui');
 
-const ons_css = require('../node_modules/onsenui/css/onsenui');
-const ons_cmp_css = require('../node_modules/onsenui/css/onsen-css-components');
+const ons_css = require('onsenui/css/onsenui');
+const ons_cmp_css = require('onsenui/css/onsen-css-components');
 const main_page = require('layout/main');
 const main_style = require('style/main');
 

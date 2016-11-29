@@ -1,6 +1,8 @@
 models/
+build/
 root/res/
 MNIST_data/
+node_modules/
 *.swp
 *.pyc
 mnist-visualize-example.js

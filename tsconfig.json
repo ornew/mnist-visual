@@ -9,6 +9,6 @@
     "src/ts/**/*"
   ],
   "files": [
-    "src/entry.ts"
+    "src/app/entry.ts"
   ]
 }

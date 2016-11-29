@@ -1,10 +1,10 @@
 var path = require("path");
 module.exports = {
   entry: {
-    app: ["./src/entry.ts"]
+    app: ["./src/app/entry.ts"]
   },
   output: {
-    path: path.resolve(__dirname, "../root"),
+    path: path.resolve(__dirname, "./build/"),
     filename: "mnist-visualize-example.js",
     chunkFilename: '[chunkhash].js'
   },
@@ -27,15 +27,18 @@ module.exports = {
     }]
   },
   resolve: {
-    root: path.resolve(__dirname, "./src"),
+    root: [
+      path.resolve(__dirname, 'node_modules'),
+      path.resolve(__dirname, 'src', 'app'),
+    ],
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.html', '.css', '.styl']
   },
   devServer: {
-    contentBase: "./public",
+    contentBase: "./build/",
   },
   htmlLoader: {
     ignoreCustomFragments: [/\{\{.*?}}/],
-    root: path.resolve(__dirname, 'src'),
+    root: path.resolve(__dirname, 'src', 'app'),
     attrs: ['img:src', 'link:href']
   },
   externals:[

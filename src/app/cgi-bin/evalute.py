@@ -31,7 +31,7 @@ def do(payload):
     saver = tf.train.Saver()
     session = tf.Session()
     session.run(tf.initialize_all_variables())
-    ckpt = os.path.join(project_root, 'root', 'models', 'ckpt-%d' % step)
+    ckpt = os.path.join(project_root, 'models', 'ckpt-%d' % step)
     if os.path.isfile(ckpt):
       saver.restore(session, ckpt)
     else:

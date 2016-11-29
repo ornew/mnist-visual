@@ -27,7 +27,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--root_dir',
       type=str,
-      default=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'root'),
+      default=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app'),
       help='Server root directory.')
   FLAGS, unparsed = parser.parse_known_args()
   run_server()
