@@ -22,8 +22,6 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       body = self.rfile.read(content_len)
       params = dict(urlparse.parse_qsl(url.query))
       params.update(dict(urlparse.parse_qsl(body)))
-      print paths
-      print '%s: %s' %(self.command, self.path)
       if(paths[1] == 'api'):
         is_api = True
         if(len(paths) > 2):
