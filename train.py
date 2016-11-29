@@ -8,17 +8,10 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import mnist
 
-# MNIST data
-mnist_data = input_data.read_data_sets('MNIST_data', one_hot=True)
-
-# Log verbose
-verbose = False
-
 abscd = os.path.abspath(os.path.dirname(__file__))
 
-FLAGS = None
-
-def train():
+def train(FLAGS):
+  mnist_data = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
   with tf.Graph().as_default():
     # test results
     tests = np.zeros((20, 10, 10), dtype=np.int64);
@@ -49,7 +42,7 @@ def train():
     start = time.time()
     for step in range(1,20000+1):
       batch = mnist_data.train.next_batch(50)
-      if verbose:
+      if FLAGS.verbose:
         result = sess.run(inference, feed_dict={
           x:batch[0], y: batch[1], keep_prob: 1.0})
         for i in range(50):
@@ -74,7 +67,7 @@ def train():
             if t != l:
               tests[step // 1000 - 1][l][t] += 1;
         print ''
-      elif verbose:
+      elif FLAGS.verbose:
         print ''
       sess.run(train, feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
     elapsed_time = time.time() - start
@@ -92,6 +85,16 @@ if __name__ == '__main__':
       default=os.path.join(abscd, 'root', 'models'),
       help='Checkpoints saved directory.'
   )
+  parser.add_argument(
+      '--data_dir',
+      type=str,
+      default=os.path.join(abscd, 'MNIST_data'),
+      help='MNIST data directory.'
+  )
+  verbose = parser.add_mutually_exclusive_group()
+  verbose.add_argument('-v', '--verbose', dest='verbose', action='store_true',  help='Log verbose')
+  verbose.add_argument('--no_verbose',    dest='verbose', action='store_false')
+  parser.set_defaults(verbose=False)
   FLAGS, unparsed = parser.parse_known_args()
-  train()
+  train(FLAGS)
 
