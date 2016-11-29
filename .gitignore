@@ -6,5 +6,6 @@ node_modules/
 *.swp
 *.pyc
 mnist-visualize-example.js
+*.zip
 test_results.json
 
