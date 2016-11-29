@@ -2,8 +2,6 @@
 
 import sys
 import os
-import cgi
-import json
 import numpy as np
 import tensorflow as tf
 import mnist
@@ -11,22 +9,19 @@ import mnist
 ckpt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'models'))
 
 def error(m):
-  print json.dumps({
+  return {
     'error': m
-  })
+  }
 
 def evalute(payload=None):
-  print "Content-type: application/json"
-  print # Follow body
   if payload == None:
-    error('Payload was not found.')
-    return
+    return error('Payload was not found.')
+
   image = payload.get('data', None)
   step = payload.get('step', 1000)
 
   if image == None:
-    error("The 'data' parameter is require.")
-    return
+    return error("The 'data' parameter is require.")
 
   with tf.Graph().as_default():
     x = tf.placeholder(tf.float32, shape=[None, 784])
@@ -39,12 +34,11 @@ def evalute(payload=None):
     if os.path.isfile(ckpt):
       saver.restore(session, ckpt)
     else:
-      error('Checkpoint file for %d step is not found.' % step)
-      return
+      return error('Checkpoint file for %d step is not found.' % step)
     results = session.run(inference, feed_dict={x:[image], keep_prob: 1.0})[0]
     result = np.argmax(results)
-    print json.dumps({
-        'inference': result,
-        'results': results.tolist()
-      })
+    return {
+      'inference': result,
+      'results': results.tolist()
+    }
 

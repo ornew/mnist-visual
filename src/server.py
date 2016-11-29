@@ -14,9 +14,8 @@ from evalute import evalute
 
 class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def impl(self):
+    is_api = False
     try:
-      def write(text):
-        self.wfile.write(text)
       url = urlparse.urlparse(self.path)
       paths = os.path.normpath(url.path).split(os.path.sep)
       content_len = int(self.headers.getheader('content-length', 0))
@@ -26,13 +25,15 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       print paths
       print '%s: %s' %(self.command, self.path)
       if(paths[1] == 'api'):
+        is_api = True
         if(len(paths) > 2):
           if(paths[2] == 'evalute.json'):
             payload = json.loads(params.get('payload', {}))
+            response = evalute(payload)
             self.send_response(200)
-            sys.stdout = self.wfile
-            evalute(payload)
-            sys.stdout = sys.__stdout__
+            self.send_header('content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(response))
           else:
             self.send_error(404)
         else:
@@ -41,8 +42,16 @@ class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
     except Exception as e:
       sys.stdout = sys.__stdout__
+      if(is_api):
+        self.send_response(500)
+        self.send_header('content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({
+          'error': 'Something happened!'
+        }))
+      else:
+        self.send_error(500)
       print "Exception: " + str(e)
-      self.send_error(500)
   def do_GET(self):
     self.impl()
   def do_POST(self):
