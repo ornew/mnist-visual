@@ -58,7 +58,12 @@ def run_server(FLAGS):
   httpd   = threading.Thread(target=server.serve_forever)
   httpd.setDaemon(True)
   httpd.start()
-  print raw_input('wait key')
+  try:
+    while True:
+      pass
+  except KeyboardInterrupt:
+    return
+
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
