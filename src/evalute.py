@@ -8,7 +8,7 @@ import numpy as np
 import tensorflow as tf
 import mnist
 
-ckpt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'app','models'))
+ckpt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'models'))
 
 def error(m):
   print json.dumps({
