@@ -116,7 +116,7 @@ function evalute() {
           var response = JSON.parse(this.responseText);
           if('error' in response) {
             error(response['error']);
-            return;
+            break;
           }
           document.getElementById("inference").innerHTML = response['inference'];
           for(var i = 0; i < 10; ++i) {
