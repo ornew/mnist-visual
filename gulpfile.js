@@ -14,6 +14,7 @@ gulp.task('copy', function () {
     './src/app/index.html',
     './src/server.py',
     './src/evalute.py',
+    './src/train.py',
     './src/mnist/**/*.py'],
     { base: 'src/' })
     .pipe(gulp.dest('./build/'));
