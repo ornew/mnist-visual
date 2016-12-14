@@ -37,7 +37,7 @@ def train(FLAGS):
 
         # Create Session
         sess = tf.Session()
-        sess.run(tf.initialize_all_variables())
+        sess.run(tf.global_variables_initializer())
 
         # Training and Evaluting
         print('Start training.')

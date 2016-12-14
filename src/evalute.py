@@ -29,7 +29,7 @@ def evalute(payload=None):
     inference = mnist.inference(x, keep_prob)
     saver = tf.train.Saver()
     session = tf.Session()
-    session.run(tf.initialize_all_variables())
+    session.run(tf.global_variables_initializer())
     ckpt = os.path.join(ckpt_dir, 'ckpt-%d' % step)
     if os.path.isfile(ckpt):
       saver.restore(session, ckpt)
