@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>MNIST</title>
+    <meta charset="utf-8">
+    <meta name="author" content="古川新,Arata Furukawa,ornew">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body class="ornew">
+    <h1>WebSockets Test</h1>
+    <script>
+      var ws;
+      ws = new WebSocket('ws://' + location.host + '/streaming');
+      ws.onmessage = function(event) {
+        data = document.createElement('p');
+        data.innerHTML = event.data
+        document.getElementById('log').appendChild(data);
+        console.log(event.data)
+      }
+      ws.onopen = function(){
+        //ws.send('aaaaaa');
+      }
+    </script>
+    <div id="log">
+
+    </div>
+  </body>
+</html>

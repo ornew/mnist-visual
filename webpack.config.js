@@ -1,7 +1,7 @@
 var path = require("path");
 module.exports = {
   entry: {
-    app: ["./src/app/entry.ts"]
+    app: ["./src/app/entry.ts"],
   },
   output: {
     path: path.resolve(__dirname, "./build/"),
@@ -14,7 +14,7 @@ module.exports = {
       loaders: ["style", "css", "stylus"]
     }, {
       test: /\.ts$/,
-      loaders: ["ts"]
+      loaders: ['babel', 'ts']
     }, {
       test   : /\.(png|jpg|gif)$/,
       loader : 'url?limit=8192'

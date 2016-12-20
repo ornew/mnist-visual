@@ -5,7 +5,9 @@ const ons = require('onsenui');
 const ons_css = require('onsenui/css/onsenui');
 const ons_cmp_css = require('onsenui/css/onsen-css-components');
 const main_page = require('layout/main');
+const train_page = require('layout/train');
 const main_style = require('style/main');
+
 
 var context: any;
 var canvas: any;
@@ -137,115 +139,13 @@ function evalute() {
   }));
 }
 
-function update_table(step: number){
-  const tables = document.getElementById('test-results').children;
-  if(tables){
-    for(let i = 0; i < tables.length; ++i){
-      if(i + 1 == step / 1000){
-        (<HTMLElement> tables[i]).style.display = 'table';
-      } else {
-        (<HTMLElement> tables[i]).style.display = 'none';
-      }
-    }
-  }
-}
-
 function onSeekStepConfig(){
   step = parseInt(step_seekbar.value);
   step_display.innerHTML = step_seekbar.value;
-  update_table(step);
 }
 
-function load_test_results(){
-  const loss_maps = document.getElementById('test-results');
-  const loading: any = document.createElement('ons-progress-circular');
-  loss_maps.appendChild(loading);
 
-  const request = new XMLHttpRequest();
-  request.responseType = 'json';
-  request.addEventListener('progress', (event: ProgressEvent) => {
-    if(event.lengthComputable){
-      loading.value = event.loaded * 100. /event.total;
-    } else {
-      loading.setAttribute('indeterminate', '');
-    }
-  });
-  request.addEventListener('load', (event: Event) => {
-    if(request.status == 200){
-      const json: any = request.response;
-      if(json){
-        const frag_loss_maps = document.createDocumentFragment();
-        for(let n = 0; n < json.length; ++n){
-          const table = document.createElement('table');
-          const frag_table = document.createDocumentFragment();
-          const thead = document.createElement('thead');
-          const tbody = document.createElement('tbody');
-          const frag_thead = document.createDocumentFragment();
-          const frag_tbody = document.createDocumentFragment();
-          {
-            const tr = document.createElement('tr');
-            const frag_tr = document.createDocumentFragment();
-            frag_tr.appendChild(document.createElement('th'));
-            for(let i = 0; i < 10; ++i){
-              const th = document.createElement('th');
-              th.textContent = '' + i;
-              frag_tr.appendChild(th);
-            }
-            tr.appendChild(frag_tr);
-            frag_table.appendChild(tr);
-          }
-          for(let i = 0; i < 10; ++i){
-            let frag_tr = document.createDocumentFragment();
-            let tr = document.createElement('tr');
-            let th = document.createElement('th');
-            th.textContent = '' + i;
-            frag_tr.appendChild(th);
-            for(let j = 0; j < 10; ++j){
-              const p = json[n][i][j];
-              let v = p / 20;
-              if(v > 1){
-                v = 1;
-              }
-              const td = document.createElement('td');
-              td.textContent = '' + p;
-              td.style.opacity = String(v);
-              frag_tr.appendChild(td);
-            }
-            tr.appendChild(frag_tr);
-            frag_tbody.appendChild(tr);
-          }
-          tbody.appendChild(frag_tbody);
-          frag_table.appendChild(tbody);
-          table.appendChild(frag_table);
-          frag_loss_maps.appendChild(table);
-          table.style.display = 'none';
-        }
-        loss_maps.appendChild(frag_loss_maps);
-        window.setTimeout(() => { onSeekStepConfig(); }, 0);
-      }
-    } else {
-      error('テストデータの取得に失敗しました: ' + request.status + ' ' + request.statusText);
-    }
-    loading.remove();
-  });
-  request.addEventListener('error', (event: ProgressEvent) => {
-  });
-  request.open('GET', 'test_results.json');
-  request.send();
-}
-
-window.onload = function(){
-  document.body.innerHTML = main_page;
-  if(ons.platform.isIOS()){
-    ons.platform.select('ios');
-    error('ios');
-  } else if(ons.platform.isAndroid()){
-    ons.platform.select('android');
-    error('android');
-  } else {
-    ons.platform.select('android');
-    error('other');
-  }
+function aaa(){
   canvas = document.getElementById("canvas");
   canvas.addEventListener("touchstart",onDown,false);
   canvas.addEventListener("touchmove",onMove,false);
@@ -298,7 +198,131 @@ window.onload = function(){
       }
     }
   });
+}
 
-  load_test_results();
+const Session = require('script/session').Session;
+
+class App {
+
+}
+
+class Logger {
+  private log: HTMLElement;
+  constructor(log: HTMLElement){
+    this.log = log;
+  }
+  print(message: string){
+    let now = new Date();
+    let log = document.createElement('p');
+    log.innerHTML
+      = '<time>[' + now.toDateString() + ' ' + now.toLocaleTimeString() + ']</time>'
+      + '<span>' + message + '</span>';
+    this.log.appendChild(log);
+    return log;
+  }
+  debug(message: string){
+    this.print(message).classList.add('debug');
+  }
+  error(message: string){
+    this.print(message).classList.add('error');
+  }
+}
+
+window.onload = function(){
+  document.body.innerHTML = train_page;
+  const samples = <HTMLElement> document.getElementById('test_sample');
+  let frag = document.createDocumentFragment();
+  let test: {
+    labels: number[];
+    sample: {
+      size: number;
+      imgs: HTMLElement[];
+      inferences: HTMLElement[];
+    };
+  } = {
+    labels: [],
+    sample: {
+      size: 200,
+      imgs: [],
+      inferences: []
+    }
+  };
+  const start = 0;
+  for(let i = start; i < test.sample.size; ++i){
+    let div = document.createElement('div');
+    let span = document.createElement('span');
+    let img = document.createElement('img');
+    img.src = '/img/test/' + i + '.png';
+    span.textContent = '-';
+    test.sample.imgs.push(img);
+    test.sample.inferences.push(span);
+    div.appendChild(img);
+    div.appendChild(span);
+    frag.appendChild(div);
+  }
+  samples.appendChild(frag);
+  const canvas = <HTMLCanvasElement> document.getElementById('canvas_test_results');
+  const accuracy = document.getElementById('accuracy');
+  canvas.setAttribute('width', '100');
+  canvas.setAttribute('height', '100');
+  const context = canvas.getContext( "2d" );
+  const update = (results: number[]) => {
+    let image = context.getImageData(0, 0, 100, 100);
+    let pixels = image.data;
+    for(let n = 0; n < 10000; ++n) {
+      let i = n * 4;
+      if(results[n] == test.labels[n]){
+        pixels[i] = 0;
+        pixels[i+1] = 255;
+        pixels[i+2] = 0;
+      } else {
+        pixels[i] = 255;
+        pixels[i+1] = 0;
+        pixels[i+2] = 0;
+      }
+      pixels[i+3] = 255;
+    }
+    context.putImageData(image, 0, 0);
+    for(let n = start; n < test.sample.size; ++n) {
+      let e = test.sample.inferences[n];
+      e.textContent = String(results[n]);
+      e.parentElement.className = (test.labels[n] == results[n] ? 'true' : 'false');
+    }
+  };
+  const log = new Logger(document.getElementById('log'));
+  const session = new Session('ws://' + location.host + '/streaming')
+  session.add_listener('message', (event: MessageEvent) => {
+    console.log(event.data);
+    let json = JSON.parse(event.data);
+    switch(json.event){
+      case 'open':
+        button_start.disabled = false;
+        log.debug('Session ID: ' + json.id);
+        break;
+      case 'start':
+        log.debug('Training started...');
+        test.labels = json.data.test_labels;
+        break;
+      case 'test':
+        update(json.data.inference);
+        accuracy.innerHTML = Math.floor(json.data.accuracy * 10000) / 100 + '% (step ' + json.data.step + ')';
+        break;
+    }
+  });
+  session.add_listener('close', (event: CloseEvent) => {
+    log.error('Connection closed: ' + event.code + ' - ' + event.reason);
+  });
+  session.add_listener('error', (event: Event) => {
+    log.error('' + event);
+  });
+  const button_start = <HTMLInputElement> document.getElementById("button_start");
+  button_start.addEventListener("click", () => {
+    session.send('start', null);
+    button_start.disabled = true;
+  });
+  const button_cancel = <HTMLInputElement> document.getElementById("button_cancel");
+  button_cancel.addEventListener("click", () => {
+    session.send('cancel', null);
+  });
 }
 
