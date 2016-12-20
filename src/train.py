@@ -26,7 +26,7 @@ def train(FLAGS):
         inference = mnist.inference(x, keep_prob)
         train = mnist.train(inference, y)
         accuracy = mnist.accuracy(inference, y)
-        merge = tf.merge_all_summaries()
+        merge = tf.summary.merge_all()
 
         saver = tf.train.Saver(
                 write_version=1, # Avoid version bug
@@ -42,7 +42,7 @@ def train(FLAGS):
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
 
-        writer = tf.train.SummaryWriter(
+        writer = tf.summary.FileWriter(
             os.path.join(FLAGS.log_dir, dt.now().strftime('%Y%m%d%H%M%S')) + '_' + uuid.uuid4().hex,
             sess.graph)
 
