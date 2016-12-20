@@ -1,5 +1,7 @@
 import sys
 import os
+import uuid
+from datetime import datetime as dt
 import argparse
 import time
 import json
@@ -24,6 +26,7 @@ def train(FLAGS):
         inference = mnist.inference(x, keep_prob)
         train = mnist.train(inference, y)
         accuracy = mnist.accuracy(inference, y)
+        merge = tf.merge_all_summaries()
 
         saver = tf.train.Saver(
                 write_version=1, # Avoid version bug
@@ -38,6 +41,10 @@ def train(FLAGS):
         # Create Session
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
+
+        writer = tf.train.SummaryWriter(
+            os.path.join(FLAGS.log_dir, dt.now().strftime('%Y%m%d%H%M%S')) + '_' + uuid.uuid4().hex,
+            sess.graph)
 
         # Training and Evaluting
         print('Start training.')
@@ -54,10 +61,11 @@ def train(FLAGS):
                         sys.stdout.write("\033[94mx\033[0m")
                     else:
                         sys.stdout.write("\033[91mx\033[0m")
+                sys.stdout.write("... ")
             if step % 100 == 0:
                 train_accuracy = sess.run(accuracy, feed_dict={
-                    x:batch[0], y: batch[1], keep_prob: 1.0})
-                sys.stdout.write(" ===> Step %5d, Accuracy %1.02f" % (step, train_accuracy))
+                    x:mnist_data.test.images, y: mnist_data.test.labels, keep_prob: 1.0})
+                sys.stdout.write("===> Step %5d, Test Accuracy: %1.02f" % (step, train_accuracy))
                 if step % 1000 == 0:
                     ckpt = saver.save(sess, os.path.join(FLAGS.ckpt_dir, 'ckpt'), global_step=step)
                     sys.stdout.write(" @%s" % ckpt)
@@ -71,7 +79,8 @@ def train(FLAGS):
                 print ''
             elif FLAGS.verbose:
                 print ''
-            sess.run(train, feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+            _, summary = sess.run([train, merge], feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+            writer.add_summary(summary, global_step=step)
         elapsed_time = time.time() - start
         print('Total time: {0} [sec]'.format(elapsed_time))
         print('Save test_results.json ...')
@@ -86,6 +95,11 @@ if __name__ == '__main__':
         type=str,
         default=os.path.join(pwd, 'models'),
         help='Checkpoints saved directory.')
+    parser.add_argument(
+        '--log_dir',
+        type=str,
+        default=os.path.join(pwd, 'log'),
+        help='The training log outputed directory.')
     parser.add_argument(
         '--data_dir',
         type=str,
