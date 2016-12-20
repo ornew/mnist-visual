@@ -38,6 +38,7 @@ def inference(x, keep_prob):
 
 def train(inference, label):
   cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(inference, label))
+  tf.summary.scalar("cross_entropy", cross_entropy)
   return tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 
 def accuracy(inference, label):

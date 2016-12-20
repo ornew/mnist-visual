@@ -1,5 +1,7 @@
 import sys
 import os
+import uuid
+from datetime import datetime as dt
 import argparse
 import time
 import json
@@ -40,6 +42,7 @@ def train(FLAGS, mnist_data, handler=None):
         inference = mnist.inference(x, keep_prob)
         train = mnist.train(inference, y)
         accuracy = mnist.accuracy(inference, y)
+        merge = tf.summary.merge_all()
 
         saver = tf.train.Saver(
                 max_to_keep=200)
@@ -53,6 +56,10 @@ def train(FLAGS, mnist_data, handler=None):
         # Create Session
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
+
+        writer = tf.summary.FileWriter(
+            os.path.join(FLAGS.log_dir, dt.now().strftime('%Y%m%d%H%M%S')) + '_' + uuid.uuid4().hex,
+            sess.graph)
 
         # Training and Evaluting
         print('Start training.')
@@ -72,6 +79,7 @@ def train(FLAGS, mnist_data, handler=None):
                         sys.stdout.write("\033[94mx\033[0m")
                     else:
                         sys.stdout.write("\033[91mx\033[0m")
+                sys.stdout.write("... ")
             if step % 100 == 0:
                 test_inference, test_accuracy = sess.run([inference, accuracy], feed_dict={
                     x: mnist_data.test.images, y: mnist_data.test.labels, keep_prob: 1.0})
@@ -79,7 +87,9 @@ def train(FLAGS, mnist_data, handler=None):
                     'step': step,
                     'inference': test_inference.argmax(axis=1).tolist(),
                     'accuracy': str(test_accuracy)})
-                sys.stdout.write(" ===> Step %5d, Accuracy %1.02f" % (step, test_accuracy))
+                train_accuracy = sess.run(accuracy, feed_dict={
+                    x:mnist_data.test.images, y: mnist_data.test.labels, keep_prob: 1.0})
+                sys.stdout.write("===> Step %5d, Test Accuracy: %1.02f" % (step, train_accuracy))
                 if step % 1000 == 0:
                     ckpt = saver.save(sess, os.path.join(FLAGS.ckpt_dir, 'ckpt'), global_step=step)
                     sys.stdout.write(" @%s" % ckpt)
@@ -87,7 +97,8 @@ def train(FLAGS, mnist_data, handler=None):
                 print ''
             elif FLAGS.verbose:
                 print ''
-            sess.run(train, feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+            _, summary = sess.run([train, merge], feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+            writer.add_summary(summary, global_step=step)
         elapsed_time = time.time() - start
         print('Total time: {0} [sec]'.format(elapsed_time))
         print('Done!')
@@ -100,6 +111,11 @@ if __name__ == '__main__':
         type=str,
         default=os.path.join(pwd, 'models'),
         help='Checkpoints saved directory.')
+    parser.add_argument(
+        '--log_dir',
+        type=str,
+        default=os.path.join(pwd, 'log'),
+        help='The training log outputed directory.')
     parser.add_argument(
         '--data_dir',
         type=str,
