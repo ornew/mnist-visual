@@ -5,9 +5,20 @@ var seq = require('run-sequence');
 var del = require('del');
 var webpack = require('webpack-stream');
 var webpack_config = require('./webpack.config.js');
+var protoc = require('gulp-protoc');
 
 var config = JSON.parse(fs.readFileSync('./package.json'));
 
+gulp.task('compile:protoc:python', function() {
+  return gulp.src('./src/proto/**/*.proto')
+    .pipe(protoc('python'))
+    .pipe(gulp.dest('./gen/proto/python'));
+});
+gulp.task('compile:protoc:js', function() {
+  return gulp.src('./src/proto/**/*.proto')
+    .pipe(protoc('js'))
+    .pipe(gulp.dest('./gen/proto/js'));
+});
 gulp.task('compile', function () {
   return gulp.src('./src/app/entry.ts')
     .pipe(webpack(webpack_config))

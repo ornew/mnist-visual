@@ -42,7 +42,6 @@ def train(FLAGS, mnist_data, handler=None):
         inference = mnist.inference(x, keep_prob)
         train = mnist.train(inference, y)
         accuracy = mnist.accuracy(inference, y)
-        merge = tf.summary.merge_all()
 
         saver = tf.train.Saver(
                 max_to_keep=200)
@@ -56,10 +55,6 @@ def train(FLAGS, mnist_data, handler=None):
         # Create Session
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
-
-        writer = tf.summary.FileWriter(
-            os.path.join(FLAGS.log_dir, dt.now().strftime('%Y%m%d%H%M%S')) + '_' + uuid.uuid4().hex,
-            sess.graph)
 
         # Training and Evaluting
         print('Start training.')
@@ -87,9 +82,7 @@ def train(FLAGS, mnist_data, handler=None):
                     'step': step,
                     'inference': test_inference.argmax(axis=1).tolist(),
                     'accuracy': str(test_accuracy)})
-                train_accuracy = sess.run(accuracy, feed_dict={
-                    x:mnist_data.test.images, y: mnist_data.test.labels, keep_prob: 1.0})
-                sys.stdout.write("===> Step %5d, Test Accuracy: %1.02f" % (step, train_accuracy))
+                sys.stdout.write("===> Step %5d, Test Accuracy: %1.02f" % (step, test_accuracy))
                 if step % 1000 == 0:
                     ckpt = saver.save(sess, os.path.join(FLAGS.ckpt_dir, 'ckpt'), global_step=step)
                     sys.stdout.write(" @%s" % ckpt)
@@ -97,8 +90,7 @@ def train(FLAGS, mnist_data, handler=None):
                 print ''
             elif FLAGS.verbose:
                 print ''
-            _, summary = sess.run([train, merge], feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
-            writer.add_summary(summary, global_step=step)
+            sess.run([train], feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
         elapsed_time = time.time() - start
         print('Total time: {0} [sec]'.format(elapsed_time))
         print('Done!')

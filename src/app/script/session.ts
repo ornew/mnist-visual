@@ -22,5 +22,6 @@ export class Session {
   }
   add_listener(type: string, listener: (event: Event) => any){
     this.ws.addEventListener(type, listener);
+    return this;
   }
 }

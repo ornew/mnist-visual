@@ -31,7 +31,10 @@ module.exports = {
       path.resolve(__dirname, 'node_modules'),
       path.resolve(__dirname, 'src', 'app'),
     ],
-    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.html', '.css', '.styl']
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.html', '.css', '.styl'],
+    alias: {
+      'vue$': 'vue/dist/vue.js'
+    }
   },
   devServer: {
     contentBase: "./build/",

@@ -15,8 +15,10 @@
   "license": "ISC",
   "dependencies": {
     "chart.js": "^2.4.0",
+    "d3": "^4.4.0",
     "google-protobuf": "^3.1.1",
-    "onsenui": "^2.0.4"
+    "onsenui": "^2.0.4",
+    "vue": "^2.1.6"
   },
   "devDependencies": {
     "@types/node": "^6.0.51",
@@ -26,6 +28,7 @@
     "del": "^2.2.2",
     "file-loader": "^0.9.0",
     "gulp": "^3.9.1",
+    "gulp-protoc": "0.0.2",
     "gulp-zip": "^3.2.0",
     "html-loader": "^0.4.4",
     "run-sequence": "^1.2.2",

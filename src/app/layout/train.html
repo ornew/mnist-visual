@@ -1,23 +1,26 @@
-<ons-page>
-  <ons-toolbar>
-    <div class="center">MNIST Visualize Example</div>
-  </ons-toolbar>
-  <section id="contents" class="contents">
-    <div class="buttons">
-      <ons-button id="button_start">START</ons-button>
-      <ons-button id="button_cancel">CANCEL</ons-button>
+<section id="app">
+  <h1>
+    {{ title }}
+  </h1>
+  <div class="buttons">
+    <button @click="start_training" :disabled="ui.buttons.start">START</button>
+    <button @click="cancel_training" :disabled="ui.buttons.cancel">CANCEL</button>
+  </div>
+  <section v-if="test.logs.length > 0">
+    <div>Accuracy</div>
+    <div>{{ test.logs[test.logs.length - 1].accuracy }}%</div>
+    <div class="samples">
+      <template v-for="(sample, i) in sampleTestData">
+        <div :class="test.labels[i + ui.sample.start] == sample ? 'true' : 'false'">
+          <img :src="'/img/test/' + (i + ui.sample.start) + '.png'" />
+          <span>{{ sample }}</span>
+        </div>
+      </template>
     </div>
-    <section>
-      <div class="center">
-        <div>精度</div>
-        <div id="accuracy">-</div>
-      </div>
-      <canvas id="canvas_test_results">
-      </canvas>
-    </section>
-    <section id="test_sample">
-    </section>
-    <section id="log">
-    </section>
   </section>
-</ons-page>
+  <section class="logs">
+    <template v-for="log in logs">
+      <p :class="log.type">{{ log.message }}</p>
+    </template>
+  </section>
+</section>
