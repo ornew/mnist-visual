@@ -1,0 +1,50 @@
+#app
+  h1
+    font-size 1.3em
+  h2
+    2em 0 0 0
+  max-width 800px
+  margin 0 auto
+  button
+    margin 1em
+    padding 0.8em 1.2em
+    cursor pointer
+  button[disabled]
+    opacity .5
+  button[raised]
+    color white
+    background #3f51b5
+    border 1px solid #3f51b5
+    box-shadow 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12)
+  button[colored]
+    color #3f51b5
+    background none
+    border 0
+
+  .samples
+    display flex
+    flex-wrap wrap
+    img
+      width 21px
+      height 21px
+      border 1px solid
+    div
+      display inline-flex
+      justify-content center
+      align-items center
+      margin 3px 8px
+      font-size 16px
+    span
+      margin 0 10px
+    .true
+      color green
+    .false
+      color red
+  .accuracy
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
+    margin 1em
+    .per
+      font-size 1.5em

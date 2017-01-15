@@ -48,7 +48,7 @@ MAX_WORKERS = 2
 clients = deque()
 suspend_clients = deque()
 data_dir = os.path.join(pwd, 'MNIST_data')
-cache_dir = os.path.join(pwd, 'var', 'cache')
+cache_dir = os.path.join(pwd, 'app', 'img', 'test')
 print('Downloading MNIST datasets...')
 mnist_data = input_data.read_data_sets(data_dir, one_hot=True)
 def generate_test_image_files(test_data):

@@ -1,4 +1,5 @@
 
+declare var hljs: any;
 
 // Import Library Module
 const Vue = require('vue');
@@ -6,7 +7,7 @@ const Vue = require('vue');
 const Session = require('script/session').Session;
 
 // Import CSS
-const main_style = require('style/main');
+const css = require('style/app');
 
 // Import HTML layout (Vue like)
 const train_page = require('layout/train');
@@ -24,6 +25,7 @@ interface TestResult {
 
 interface AppData {
   title: string;
+  status: string;
   ui: {
     buttons: {
       start: boolean;
@@ -62,6 +64,7 @@ class App {
     this.el = el;
     this.data = {
       title: 'MNIST Visualize Example',
+      status: null,
       ui: {
         buttons: {
           start: true,
@@ -79,13 +82,28 @@ class App {
       logs: []
     };
     this.methods = {
+      prev(){
+        this.ui.sample.start -= this.ui.sample.size
+        if(this.ui.sample.start < 0){
+          this.ui.sample.start = 0
+        }
+      },
+      next(){
+        this.ui.sample.start += this.ui.sample.size
+        if(this.ui.sample.start + this.ui.sample.size >= this.test.labels.length){
+          this.ui.sample.start = this.test.labels.length - this.ui.sample.size
+        }
+      },
       start_training: (event: Event) => {
         this.data.ui.buttons.start  = true;
         this.data.ui.buttons.cancel = false;
         this.session.send('start', null);
+        this.data.status = '訓練を実行しています・・・';
       },
       cancel_training: (event: Event) => {
+        this.data.ui.buttons.cancel = true;
         this.session.send('cancel', null);
+        this.data.status = '訓練を中断しています・・・';
       },
     };
     this.root = new Vue({
@@ -93,6 +111,13 @@ class App {
       data: this.data,
       methods: this.methods,
       watch: this.watcher,
+      mounted(){
+        console.log(this.$el)
+        this.$el.querySelectorAll('code').forEach((block: any) => {
+          console.log(block)
+          hljs.highlightBlock(block);
+        })
+      },
       computed: {
         sampleTestData: () => {
           return this.data.test.logs[this.data.test.logs.length - 1].inference.slice(
@@ -125,6 +150,10 @@ class App {
           accuracy: Math.floor(json.data.accuracy * 10000) / 100,
           inference: json.data.inference,
         });
+        break;
+      case 'cancel':
+        this.data.ui.buttons.start = false;
+        this.data.status = '訓練が中断されました';
         break;
     }
   }
