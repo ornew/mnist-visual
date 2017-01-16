@@ -42,6 +42,7 @@ def train(FLAGS, mnist_data, handler=None):
         inference = mnist.inference(x, keep_prob)
         train = mnist.train(inference, y)
         accuracy = mnist.accuracy(inference, y)
+        merge = tf.summary.merge_all()
 
         saver = tf.train.Saver(
                 max_to_keep=200)
@@ -55,6 +56,10 @@ def train(FLAGS, mnist_data, handler=None):
         # Create Session
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
+
+        writer = tf.summary.FileWriter(
+            FLAGS.ckpt_dir,
+            sess.graph)
 
         # Training and Evaluting
         print('Start training.')
@@ -92,7 +97,8 @@ def train(FLAGS, mnist_data, handler=None):
                 print ''
             elif FLAGS.verbose:
                 print ''
-            sess.run([train], feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+            _, summary = sess.run([train, merge], feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+            writer.add_summary(summary, global_step=step)
         elapsed_time = time.time() - start
         print('Total time: {0} [sec]'.format(elapsed_time))
         print('Done!')
