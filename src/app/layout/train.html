@@ -9,6 +9,7 @@
   <div v-if="status">{{ status }}</div>
   <section v-if="test.logs.length > 0">
     <h3>テスト結果 （{{ test.logs[test.logs.length - 1].step }}ステップ目）</h3>
+    <div>100-300ステップは10ステップごとに、300-1000ステップは100ステップごとに、それ以降は200ステップごとにテスト結果を表示します。</div>
     <div class="accuracy">
       <span>正答率</span>
       <span class="per">{{ test.logs[test.logs.length - 1].accuracy }}%</span>
