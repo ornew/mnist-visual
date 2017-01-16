@@ -152,13 +152,16 @@ class App {
         });
         break;
       case 'cancel':
-        this.data.ui.buttons.start = false;
-        this.data.status = '訓練が中断されました';
+        //this.data.ui.buttons.start = false;
+        this.data.status = '訓練が中断されました。（やり直す場合はページをリロードしてください）';
         break;
     }
   }
   private on_session_close(event: CloseEvent){
     this.logger.error('Connection closed: ' + event.code + ' - ' + event.reason);
+    this.data.ui.buttons.start = true;
+    this.data.ui.buttons.cancel = true;
+    this.data.status = '通信が切断されました。';
   }
   private on_session_error(event: Event){
     this.logger.error('' + event);

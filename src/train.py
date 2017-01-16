@@ -75,7 +75,9 @@ def train(FLAGS, mnist_data, handler=None):
                     else:
                         sys.stdout.write("\033[91mx\033[0m")
                 sys.stdout.write("... ")
-            if step % 100 == 0:
+            if (step =< 100 and step % 10 == 0)\
+            or (100 < step and step =< 1000 and step % 100 == 0)\
+            or step % 200 == 0:
                 test_inference, test_accuracy = sess.run([inference, accuracy], feed_dict={
                     x: mnist_data.test.images, y: mnist_data.test.labels, keep_prob: 1.0})
                 fire('test', {
