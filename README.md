@@ -12,7 +12,6 @@ When you are done, start the server: `python build/server.py -p <port>`. Open
 
 ```
 $ cd <unziped dir>
-$ python train.py
 $ python server.py -p <port>
 ```
 
