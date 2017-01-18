@@ -90,7 +90,9 @@ def train(FLAGS, mnist_data, handler=None):
                     'inference': test_inference.argmax(axis=1).tolist(),
                     'accuracy': str(test_accuracy)})
                 sys.stdout.write("===> Step %5d, Test Accuracy: %1.02f" % (step, test_accuracy))
-                if step % 1000 == 0:
+                if (step <= 100 and step % 10 == 0)\
+                or (100 < step and step <= 1000 and step % 100 == 0)\
+                or step % 1000 == 0:
                     ckpt = saver.save(sess, os.path.join(FLAGS.ckpt_dir, 'ckpt'), global_step=step)
                     sys.stdout.write(" @%s" % ckpt)
                     fire('checkpoint', {'step': step})

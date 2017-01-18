@@ -17,9 +17,10 @@ import threading
 import json
 from tornado import httpserver, web, websocket, ioloop
 from tornado import gen
+import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-from evalute import evalute
+import mnist
 from train import train
 
 pwd = os.path.abspath(os.path.dirname(__file__))
@@ -97,6 +98,43 @@ class TrainStreamingHandler(websocket.WebSocketHandler):
         args.verbose = False
         train(args, mnist_data, handler=HandleWrapper(self))
         raise gen.Return()
+
+    @run_on_executor
+    @gen.coroutine
+    def recognize(self, payload):
+        def _impl(payload):
+            def error(m):
+                return {'error': m}
+            ckpt_dir = os.path.join(pwd, 'var', self.uuid.hex)
+            if payload == None:
+                return error('Payload was not found.')
+
+            image = payload.get('image', None)
+            step = payload.get('step', None)
+
+            if image == None:
+                return error("The 'image' parameter is require.")
+            if step == None:
+                return error("The 'step' parameter is require.")
+
+            with tf.Graph().as_default():
+                x = tf.placeholder(tf.float32, shape=[None, 784])
+                keep_prob = tf.placeholder(tf.float32)
+                inference = mnist.inference(x, keep_prob)
+                saver = tf.train.Saver()
+                session = tf.Session()
+                session.run(tf.global_variables_initializer())
+                ckpt = os.path.join(ckpt_dir, 'ckpt-%d' % step)
+                saver.restore(session, ckpt)
+                #return error('Checkpoint file for %d step is not found.' % step)
+                results = session.run(inference, feed_dict={x:[image], keep_prob: 1.0})[0]
+                result = np.argmax(results)
+                return {
+                    'inference': result,
+                    'results': results.tolist()
+                }
+        self.fire('recognized', _impl(payload))
+        raise gen.Return()
     def open(self):
         if self not in clients or self not in suspend_clients:
             self.listener = deque()
@@ -115,6 +153,8 @@ class TrainStreamingHandler(websocket.WebSocketHandler):
             event = request['event']
             if event == 'start':
                 self.start()
+            elif event == 'recognize':
+                self.recognize(request['data'])
             else:
                 if len(self.listener) > 0:
                     for listener in self.listener:

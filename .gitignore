@@ -5,7 +5,7 @@ MNIST_data/
 node_modules/
 *.swp
 *.pyc
-mnist-visualize-example.js
+mnist-visualize-example*
 *.zip
 test_results.json
 
