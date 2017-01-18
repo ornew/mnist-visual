@@ -29,6 +29,12 @@
     }),
     mounted(){
       this.canvas = this.$el.querySelector('canvas')
+      this.canvas.addEventListener("touchstart", this.onDown, false)
+      this.canvas.addEventListener("touchmove", this.onMove, false)
+      this.canvas.addEventListener("touchend", this.onUp, false)
+      this.canvas.addEventListener("mousedown", this.onMouseDown, false)
+      this.canvas.addEventListener("mousemove", this.onMouseMove, false)
+      this.canvas.addEventListener("mouseup", this.onMouseUp, false)
       this.canvas.setAttribute('width', 28)
       this.canvas.setAttribute('height', 28)
 
@@ -39,13 +45,6 @@
       this.context.lineJoin  = "round"
       this.context.lineCap   = "round"
       this.clear()
-
-      this.canvas.addEventListener("touchstart", this.onDown, false)
-      this.canvas.addEventListener("touchmove", this.onMove, false)
-      this.canvas.addEventListener("touchend", this.onUp, false)
-      this.canvas.addEventListener("mousedown", this.onMouseDown, false)
-      this.canvas.addEventListener("mousemove", this.onMouseMove, false)
-      this.canvas.addEventListener("mouseup", this.onMouseUp, false)
     },
     methods: {
       clear(){
@@ -86,7 +85,7 @@
           this.y = event.touches[0].pageY-event.target.getBoundingClientRect().top
           this.drawLine()
           this.originX = this.x
-          this.originY = this,y
+          this.originY = this.y
           event.preventDefault()
           event.stopPropagation()
         }

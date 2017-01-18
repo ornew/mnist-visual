@@ -87,20 +87,6 @@ config.webpack.debug = Object.assign({},
   config.webpack.base,
   config.webpack.flavor.debug);
 
-gulp.task('copy:app:raw', function () {
-  return gulp.src(
-    ['./src/app/raw/**/*'],
-    { base: 'src/app/raw/' })
-    .pipe(gulp.dest('./build/app/'));
-});
-gulp.task('build', ['copy'], function (callback) {
-  webpack(config.webpack.release,
-    function(err, stats) {
-      if(err){ throw new gutil.PluginError("webpack", err); }
-      gutil.log("[webpack]", stats.toString({}));
-      callback();
-    });
-});
 gulp.task("server", function(callback) {
   new server(webpack(config.webpack.debug), config.server)
     .listen(config.server.port, "localhost", function(err) {
@@ -131,18 +117,40 @@ gulp.task('copy', ['copy:app:raw'], function () {
     { base: 'src/' })
     .pipe(gulp.dest('./build/'));
 });
+gulp.task('copy:app:raw', function () {
+  return gulp.src(
+    ['./src/app/raw/**/*'],
+    { base: 'src/app/raw/' })
+    .pipe(gulp.dest('./build/app/'));
+});
+gulp.task('build', ['copy'], function (callback) {
+  webpack(config.webpack.release,
+    function(err, stats) {
+      if(err){ throw new gutil.PluginError("webpack", err); }
+      gutil.log("[webpack]", stats.toString({}));
+      callback();
+    });
+});
 gulp.task('clean', function() {
   return del('./build/');
 });
 gulp.task('rebuild', function() {
   return seq('clean', 'build');
 });
-gulp.task('deploy:zip', function() {
+const _package = `${config.package.name}_${config.package.version}`
+gulp.task('deploy:copy', function() {
   return gulp.src('./build/**/*', { base: './build/' })
-    .pipe(zip(config.name + '_' +config.version + '.zip'))
+    .pipe(gulp.dest(`./${_package}`))
+})
+gulp.task('deploy:zip', ['deploy:copy'], function() {
+  return gulp.src('./build/**/*', { base: './build/' })
+    .pipe(zip(_package + '.zip'))
     .pipe(gulp.dest('.'))
 })
+gulp.task('deploy:gzip', ['deploy:copy'], shell.task([
+  `tar cvzf ${_package}.tar.gz ${_package}`,
+]))
 gulp.task('deploy', function(){
-  return seq('clean', 'build', 'deploy:zip');
+  return seq('clean', 'build', ['deploy:zip', 'deploy:gzip']);
 })
 
